@@ -25,9 +25,9 @@ int main() {
         std::cin >> x >> y;
         if (q > 0)
         {
-            f = board.move(x, y, Core::Color::White);
+            f = board.move(x-1, y-1, Core::Color::White);
         } else {
-            f = board.move(x, y, Core::Color::Black);
+            f = board.move(x-1, y-1, Core::Color::Black);
         }
         if (f){
             q*=-1;

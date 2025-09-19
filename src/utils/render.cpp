@@ -5,7 +5,7 @@
 
 namespace Utils
 {
-    void Render::very_simple_draw(Core::Board& board){
+    void Render::very_simple_draw(Core::Situation& board){
         //system("clear");
         system("cls");
         std::cout.flush(); 

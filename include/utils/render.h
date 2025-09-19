@@ -8,6 +8,6 @@ namespace Utils
     private:
 
     public:
-        static void very_simple_draw(Core::Board& board);
+        static void very_simple_draw(Core::Situation& board);
     };
 } // namespace Utils

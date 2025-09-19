@@ -7,7 +7,7 @@ namespace Core{
     class Stone
     {
     private:
-        Color color;
+        Color m_color;
     public:
         Stone();
 

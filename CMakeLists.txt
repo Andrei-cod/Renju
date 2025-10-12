@@ -10,6 +10,7 @@ set(SOURCES
     src/main.cpp
     src/core/stone.cpp
     src/core/board.cpp
+    src/core/game.cpp
     src/utils/render.cpp
 )
 
@@ -17,6 +18,7 @@ set(SOURCES
 set(HEADERS
     include/core/stone.h
     include/core/board.h
+    include/core/game.h
     include/utils/render.h
 )
 

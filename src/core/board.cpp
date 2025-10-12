@@ -1,10 +1,13 @@
 #include "core/board.h"
 #include "core/stone.h"
+#include "utils/render.h"
 
+#include "string"
 #include <vector>
 
 namespace Core
 {
+
     /**
      * @brief Реализация конструктора пустой доски.
      *
@@ -14,6 +17,7 @@ namespace Core
     Situation::Situation(int size)
     {
         m_size = size;
+        m_draw_counter = size * size;
         m_stones = std::vector<std::vector<Stone>>(m_size, std::vector<Stone>(m_size));
     }
 
@@ -21,11 +25,17 @@ namespace Core
      * @brief Реализация конструктора доски с предустановленными камнями.
      *
      * Обрабатывает два массива координат для расстановки белых и черных камней.
-     * Выполняются проверки на валидность координат для предотвращения выхода за границы массива.
+     * Выполняются проверки на валидность координат для предотвращения выхода
+     * за границы массива.
+     *
+     * @note Также после расстановки камней проверяет не является похиция уже
+     * выигрышной или проигрышной
      */
-    Situation::Situation(int size, std::vector<std::vector<int>> white, std::vector<std::vector<int>> black)
+    Situation::Situation(int size, std::vector<std::vector<int>> white,
+                         std::vector<std::vector<int>> black)
     {
         m_size = size;
+        m_draw_counter = size * size;
         m_stones = std::vector<std::vector<Stone>>(m_size, std::vector<Stone>(m_size));
         for (auto &&pos : white)
         {
@@ -37,6 +47,7 @@ namespace Core
                 if (x >= 0 && x < m_size && y >= 0 && y < m_size)
                 {
                     m_stones[y][x].set_color(Color::White);
+                    m_draw_counter--;
                 }
             }
         }
@@ -51,9 +62,15 @@ namespace Core
                 if (x >= 0 && x < m_size && y >= 0 && y < m_size)
                 {
                     m_stones[y][x].set_color(Color::Black);
+                    m_draw_counter--;
                 }
             }
         }
+        if (check_win())
+        {
+            Utils::Render::mess((std::string)"Это уже завершенная партия.");
+        }
+        
     }
 
     /**
@@ -70,6 +87,7 @@ namespace Core
             return false;
         }
         m_stones[y][x].set_color(color);
+        m_draw_counter -= 1;
         return true;
     }
 
@@ -91,6 +109,139 @@ namespace Core
     Color Situation::get_stone_color(int x, int y)
     {
         return m_stones[y][x].get_color();
+    }
+
+    /**
+     * @brief Функция, проверяющая статус игры
+     *
+     * Проверяет, завершилась ли игра победой или ничьей
+     * после последнего хода (x, y). Победа — это пять
+     * одинаковых камней подряд в одном из четырёх направлений.
+     *
+     * @param x X-координата последнего поставленного камня
+     * @param y Y-координата последнего поставленного камня
+     * @return int Статус игры:
+     *   0 — игра продолжается
+     *   1 — победа
+     *   2 — ничья (все клетки заняты)
+     */
+    int Situation::check_win(int x, int y)
+    {
+        if (m_draw_counter <= 0)
+            return 2; // ничья
+
+        const Color base_color = m_stones[y][x].get_color();
+
+        const int directions[4][2] = {
+            {1, 0}, // горизонталь
+            {0, 1}, // вертикаль
+            {1, 1}, // диагональ верх лево -> право низ
+            {-1, 1} // диагональ другая
+        };
+
+        for (const auto &dir : directions)
+        {
+            if (has_five_in_a_row(x, y, dir[0], dir[1], base_color))
+                return 1; // победа
+        }
+
+        return 0; // игра продолжается
+    }
+    int Situation::check_win()
+    {
+        const int directions[4][2] = {
+            {1, 0}, {0, 1}, {1, 1}, {-1, 1}};
+
+        for (int y = 0; y < m_size; ++y)
+        {
+            for (int x = 0; x < m_size; ++x)
+            {
+                Color base_color = m_stones[y][x].get_color();
+
+                if (base_color == Color::None)
+                    continue;
+
+                for (const auto &dir : directions)
+                {
+                    int streak = 0;
+
+                    for (int offset = 0; offset < 5; ++offset)
+                    {
+                        int nx = x + dir[0] * offset;
+                        int ny = y + dir[1] * offset;
+
+                        if (nx < 0 || ny < 0 || nx >= m_size || ny >= m_size)
+                            break;
+
+                        if (m_stones[ny][nx].get_color() == base_color)
+                        {
+                            ++streak;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    if (streak == 5)
+                        return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * @brief Проверяет, находятся ли координаты в пределах игрового поля
+     *
+     * @param x X-координата
+     * @param y Y-координата
+     * @return true — координаты в пределах поля
+     */
+    bool Situation::is_within_bounds(int x, int y) const
+    {
+        return x >= 0 && y >= 0 && x < m_size && y < m_size;
+    }
+
+    /**
+     * @brief Проверяет, есть ли пять подряд по заданному направлению
+     *
+     * @param x X-координата центра (последнего хода)
+     * @param y Y-координата центра (последнего хода)
+     * @param dx Смещение по X (направление)
+     * @param dy Смещение по Y (направление)
+     * @param base_color Цвет, который должен повторяться
+     * @return true — есть пять подряд
+     */
+    bool Situation::has_five_in_a_row(int x, int y, int dx, int dy, Color base_color) const
+    {
+        int streak = 0;
+
+        for (int offset = -4; offset <= 4; offset++)
+        {
+            int nx = x + dx * offset;
+            int ny = y + dy * offset;
+
+            if (!is_within_bounds(nx, ny))
+            {
+                streak = 0;
+                continue;
+            }
+
+            if (m_stones[ny][nx].get_color() == base_color)
+            {
+                streak++;
+                if (streak >= 5)
+                    return true;
+            }
+            else
+            {
+                streak = 0;
+            }
+        }
+
+        return false;
     }
 
 } // namespace Core

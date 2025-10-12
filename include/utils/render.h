@@ -1,6 +1,8 @@
 #pragma once
 #include "core/board.h"
 
+#include "string"
+
 namespace Utils
 {
 
@@ -17,5 +19,9 @@ namespace Utils
          * @param board состояние поля и информация о камнях
          */
         static void very_simple_draw(Core::Situation &board);
+        
+
+        static void mess(std::string mess);
+        
     };
 } // namespace Utils

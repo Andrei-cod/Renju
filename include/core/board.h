@@ -6,6 +6,16 @@
 namespace Core
 {
     /**
+     * @brief Исход игры.
+     */
+    enum Status
+    {
+        white_wins,
+        black_wins,
+        draw,
+        ongoing
+    };
+    /**
      * @brief Класс для хранения ситуации на игровом поле.
      *
      * Класс хранит в себе состояние игрового поля и информацию о позиции каждого камня.
@@ -20,6 +30,7 @@ namespace Core
     {
     private:
         int m_size;
+        int m_draw_counter;
         std::vector<std::vector<Stone>> m_stones;
 
     public:
@@ -73,6 +84,44 @@ namespace Core
          * @return Color Цвет камня по координатам (x, y).
          */
         Color get_stone_color(int x, int y);
+
+        /**
+         * @brief Функция проверки состояния игры
+         *
+         * Проверяет не завершилась ли игра,
+         * Если да, то возвращает одну из трех концовок:
+         *  1 - игра завершилась победой
+         *  2 - ничья
+         * Иначе:
+         *  0 - игра продолжается
+         *
+         * @param x координата х.
+         * @param y координата y.
+         *
+         * @return int Состояние игры.
+         *
+         * @note Проверка происходит относительно, поставленного только что камня.
+         */
+        int check_win(int x, int y);
+        /**
+         * @brief Функция проверки состояния игры
+         *
+         * Проверяет не завершилась ли игра,
+         * Если да, то возвращает одну из трех концовок:
+         *  white_wins - белые выиграли
+         *  black_wins - черные выиграли
+         *  draw       - ничья
+         * Иначе:
+         *  ongoing - игра продолжается
+         *
+         *
+         * @return Status Состояние игры.
+         *
+         * @note Проверка всего поля.
+         */
+        int check_win();
+        bool is_within_bounds(int x, int y) const;
+        bool has_five_in_a_row(int x, int y, int dx, int dy, Color base_color) const;
     };
 
 } // namespace Core

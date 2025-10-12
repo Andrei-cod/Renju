@@ -1,36 +1,40 @@
 /**
-*   @project: Renju
-*   @brief: Traditional 5-in-a-row board game implementation
-*
-*   @author: Гущин Андрей Владимирович(Github: Andrei-cod)
-*   @date: 2025
-*   @version: 0.05
-*/
+ *   @project: Renju
+ *   @brief: Traditional 5-in-a-row board game implementation
+ *
+ *   @author: Гущин Андрей Владимирович(Github: Andrei-cod)
+ *   @date: 2025
+ *   @version: 0.1
+ */
 
-
-#include "core/board.h"
+#include "core/game.h"
 #include "utils/render.h"
 #include <iostream>
 
-int main() {
-    Core::Situation board(3);
+int main()
+{
+    Core::Game game (3, Core::Type::pve);
 
-    int q = 1;
-    bool f;
+    Core::Status f;
 
-    while (true) {
-        Utils::Render::very_simple_draw(board);
-        
+    while (true)
+    {
+        game.render();
+
         int x, y;
         std::cin >> x >> y;
-        if (q > 0)
+
+        f = game.move(x, y);
+
+        switch (f)
         {
-            f = board.move(x-1, y-1, Core::Color::White);
-        } else {
-            f = board.move(x-1, y-1, Core::Color::Black);
-        }
-        if (f){
-            q*=-1;
+        case Core::Status::white_wins:
+            return 0;
+        case Core::Status::black_wins:
+            return 0;
+        case Core::Status::draw:
+            return 0;
         }
     }
+    return 0;
 }

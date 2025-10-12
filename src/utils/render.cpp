@@ -70,4 +70,8 @@ namespace Utils
         std::cout << "Введите ход (x y): ";
         std::cout.flush();
     }
+
+    void Render::mess(std::string mess){
+        std::cout << mess;
+    }
 } // namespace Utils

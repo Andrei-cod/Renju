@@ -74,4 +74,42 @@ namespace Utils
     void Render::mess(std::string mess){
         std::cout << mess;
     }
+
+    void Render::win(Core::Situation &board, Core::Status who_win)
+    {
+        clear_console();
+
+        for (int i = 0; i < board.get_size(); i++)
+        {
+            for (int j = 0; j < board.get_size(); j++)
+            {
+                switch (board.get_stone_color(i, j))
+                {
+                case Core::Color::None:
+                    std::cout << "_ ";
+                    break;
+                case Core::Color::Black:
+                    std::cout << "O ";
+                    break;
+                case Core::Color::White:
+                    std::cout << "X ";
+                    break;
+                }
+            }
+            std::cout << std::endl;
+        }
+        switch (who_win)
+        {
+        case Core::white_wins:
+            std::cout << "Белые выиграли!!!" << std::endl; 
+            break;
+        case Core::black_wins:
+            std::cout << "Черные выиграли!!!" << std::endl; 
+            break;
+        case Core::draw:
+            std::cout << "Ничья" << std::endl; 
+            break;
+        }
+        std::cout.flush();
+    }
 } // namespace Utils

@@ -77,6 +77,8 @@ namespace Core
          */
         Status move(int x, int y);
 
+        void win();
+        
         void render();
 
     };

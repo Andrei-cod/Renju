@@ -13,6 +13,7 @@ namespace Core
         white_wins,
         black_wins,
         draw,
+        game_end,
         ongoing
     };
     /**

@@ -15,7 +15,7 @@ namespace Core
         }
     }
 
-    Status Game::move(int x, int y)
+        Status Game::move(int x, int y)
     {
         x--;
         y--;
@@ -35,27 +35,34 @@ namespace Core
             return ongoing;
         }
 
+        Status m = draw;
         int cw = m_situation.check_win(x, y);
         if (cw == 1)
         {
             if (m_turn > 0)
             {
-                return white_wins;
+                m = black_wins;
             }
             else
             {
-                return black_wins;
+                m = white_wins;
             }
+            Utils::Render::win(m_situation, m);
+            return game_end;
         }
         else if (cw == 2)
         {
-            return draw;
+            Utils::Render::win(m_situation, m);
+            return game_end;
         }
         return ongoing;
     }
 
+
+
     void Game::render(){
         Utils::Render::very_simple_draw(m_situation);
     }
+
 
 } // namespace Core

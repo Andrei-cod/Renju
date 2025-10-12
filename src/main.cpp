@@ -4,7 +4,7 @@
  *
  *   @author: Гущин Андрей Владимирович(Github: Andrei-cod)
  *   @date: 2025
- *   @version: 0.1
+ *   @version: 0.2
  */
 
 #include "core/game.h"
@@ -13,28 +13,22 @@
 
 int main()
 {
-    Core::Game game (3, Core::Type::pve);
+    Core::Game game(5, Core::Type::pve);
 
-    Core::Status f;
+    Core::Status f = Core::ongoing;
 
     while (true)
     {
-        game.render();
+        if (f == Core::ongoing)
+        {
+            game.render();
+        }else{
+            return 0;
+        }
 
         int x, y;
         std::cin >> x >> y;
 
         f = game.move(x, y);
-
-        switch (f)
-        {
-        case Core::Status::white_wins:
-            return 0;
-        case Core::Status::black_wins:
-            return 0;
-        case Core::Status::draw:
-            return 0;
-        }
     }
-    return 0;
 }

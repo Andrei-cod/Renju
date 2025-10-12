@@ -21,6 +21,8 @@ namespace Utils
         static void very_simple_draw(Core::Situation &board);
         
 
+        static void win(Core::Situation &board, Core::Status mess);
+
         static void mess(std::string mess);
         
     };

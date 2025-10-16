@@ -77,9 +77,17 @@ namespace Core
          */
         Status move(int x, int y);
 
-        void win();
-        
+        /**
+         * @brief Функция связи с классом отрисовки
+         * 
+         * Просто передает ситуацию отрисовке
+         */
         void render();
+        
+        /**
+         * @brief Запуск основного цикла игры
+         */
+        void run();
 
     };
 

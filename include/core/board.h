@@ -1,7 +1,9 @@
 #pragma once
+#include "stone.h"
 
 #include <vector>
-#include "stone.h"
+#include <deque>
+
 
 namespace Core
 {
@@ -33,6 +35,7 @@ namespace Core
         int m_size;
         int m_draw_counter;
         std::vector<std::vector<Stone>> m_stones;
+        std::deque<std::pair<int,int>> last_move;
 
     public:
         /**
@@ -43,6 +46,7 @@ namespace Core
          * @param size Размер создаваемого поля.
          */
         Situation(int size);
+
 
         /**
          * @brief Создает объект класса Situation размером size x size.
@@ -57,6 +61,7 @@ namespace Core
          */
         Situation(int size, std::vector<std::vector<int>> white, std::vector<std::vector<int>> black);
 
+
         /**
          * @brief Ставит камень цвета color на позицию (x, y).
          *
@@ -69,12 +74,23 @@ namespace Core
          */
         bool move(int x, int y, Color color);
 
+
+        /**
+         * @brief Отменяет последний выполненный ход.
+         *
+         * @return true Если отмена возможна.
+         * @return false Если нет ходов для отмены.
+         */
+        bool un_move();
+
+        
         /**
          * @brief Возвращает размер поля.
          *
          * @return int Размер поля.
          */
         int get_size();
+
 
         /**
          * @brief Возвращает цвет камня в указанной клетке.
@@ -104,24 +120,48 @@ namespace Core
          * @note Проверка происходит относительно, поставленного только что камня.
          */
         int check_win(int x, int y);
+
+
         /**
          * @brief Функция проверки состояния игры
          *
-         * Проверяет не завершилась ли игра,
-         * Если да, то возвращает одну из трех концовок:
-         *  white_wins - белые выиграли
-         *  black_wins - черные выиграли
-         *  draw       - ничья
-         * Иначе:
-         *  ongoing - игра продолжается
+         * Проверяет введнную комбинацию, не является ли та уже завершенным матчем.
+         * 
+         * 1 - Игра уже завершена
+         * 0 - Партию можно продолжить
          *
-         *
-         * @return Status Состояние игры.
+         * @return int Результат игры.
          *
          * @note Проверка всего поля.
          */
+        
         int check_win();
+
+
+        /**
+         * @brief Проверяет, находятся ли координаты в пределах игрового поля.
+         *
+         * @param x Координата X.
+         * @param y Координата Y.
+         * @return true Если координаты допустимы.
+         * @return false Если координаты выходят за границы.
+         */
+
         bool is_within_bounds(int x, int y) const;
+
+
+        /**
+         * @brief Проверяет наличие последовательности из пяти камней подряд.
+         *
+         * @param x Начальная координата X.
+         * @param y Начальная координата Y.
+         * @param dx Направление по оси X.
+         * @param dy Направление по оси Y.
+         * @param base_color Цвет, который проверяется.
+         * @return true Если найдена выигрышная комбинация.
+         * @return false Если пять камней подряд отсутствуют.
+         */
+
         bool has_five_in_a_row(int x, int y, int dx, int dy, Color base_color) const;
     };
 

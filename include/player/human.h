@@ -6,23 +6,22 @@
 
 namespace Player
 {
-    class Player
+    class Human
     {
-    protected:
-        Core::Color m_color; 
+    private:
+        Core::Color m_color;
 
     public:
-        Player(Core::Color color) : m_color(color) {}
+        Human(Core::Color color);
 
         /**
          * @brief Запрашивает у игрока ход.
          *
-         * @param situation Текущее состояние доски.
          * @return std::pair<int, int> — координаты выбранного хода (x, y)
          */
-        virtual std::pair<int, int> get_move(Core::Situation &situation) = 0;
+        std::pair<int, int> get_move();
 
-        Core::Color get_color() const { return m_color; }
+        Core::Color get_color();
     };
 
 } // namespace Player

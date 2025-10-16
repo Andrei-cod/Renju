@@ -1,5 +1,6 @@
 #include "core/board.h"
 #include "core/stone.h"
+#include "core/constans.h"
 #include "utils/render.h"
 
 #include "string"
@@ -28,8 +29,8 @@ namespace Core
      * Выполняются проверки на валидность координат для предотвращения выхода
      * за границы массива.
      *
-     * @note Также после расстановки камней проверяет не является похиция уже
-     * выигрышной или проигрышной
+     * @note После расстановки камней проверяет, не является ли позиция
+     * уже завершённой (победной или ничейной).
      */
     Situation::Situation(int size, std::vector<std::vector<int>> white,
                          std::vector<std::vector<int>> black)
@@ -68,9 +69,8 @@ namespace Core
         }
         if (check_win())
         {
-            Utils::Render::mess((std::string)"Это уже завершенная партия.");
+            Utils::Render::mess((std::string) "Это уже завершенная партия.");
         }
-        
     }
 
     /**
@@ -88,6 +88,33 @@ namespace Core
         }
         m_stones[y][x].set_color(color);
         m_draw_counter -= 1;
+        last_move.push_back({x, y});
+        if (last_move.size() > Constans::MAX_SEARCH_DEPTH)
+        {
+            last_move.pop_front();
+        }
+
+        return true;
+    }
+
+    /**
+     * @brief Отменяет последний совершённый ход.
+     *
+     * Если в списке последних ходов есть хотя бы один элемент — снимает камень
+     * с доски и восстанавливает предыдущее состояние.
+     *
+     * @return true — если отмена возможна;
+     * @return false — если история ходов пуста.
+     */
+    bool Situation::un_move()
+    {
+        if (!last_move.size())
+        {
+            return false;
+        }
+        auto [x, y] = last_move.back();
+        last_move.pop_back();
+        m_stones[x][y].set_color(None);
         return true;
     }
 
@@ -147,6 +174,16 @@ namespace Core
 
         return 0; // игра продолжается
     }
+
+    /**
+     * @brief Проверяет текущее состояние всей доски.
+     *
+     * @return int:
+     * - 1 — победа;
+     * - 0 — игра продолжается.
+     *
+     * @note Используется при инициализации или отладке партий.
+     */
     int Situation::check_win()
     {
         const int directions[4][2] = {

@@ -47,7 +47,6 @@ namespace Utils
     void Render::very_simple_draw(Core::Situation &board)
     {
         clear_console();
-
         for (int i = 0; i < board.get_size(); i++)
         {
             for (int j = 0; j < board.get_size(); j++)

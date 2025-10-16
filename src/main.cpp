@@ -9,12 +9,16 @@
 
 #include "core/game.h"
 #include "utils/render.h"
+#include "core/constans.h"
+
 #include <iostream>
+
 
 int main()
 {
-    Core::Game game(5, Core::Type::pve);
-
+    Core::Game game(Core::Constans::FIELD_SIZE, Core::Type::pve);
+    game.run();
+/*
     Core::Status f = Core::ongoing;
 
     while (true)
@@ -31,4 +35,6 @@ int main()
 
         f = game.move(x, y);
     }
+    */
+
 }

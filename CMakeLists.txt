@@ -12,6 +12,8 @@ set(SOURCES
     src/core/board.cpp
     src/core/game.cpp
     src/utils/render.cpp
+    src/player/human.cpp
+    src/solver/ips.cpp
 )
 
 # Папка с заголовками
@@ -20,6 +22,8 @@ set(HEADERS
     include/core/board.h
     include/core/game.h
     include/utils/render.h
+    include/player/human.h
+    include/solver/ips.h
 )
 
 # Создаем исполняемый файл

@@ -40,9 +40,7 @@ namespace Core
      *
      * @param x Координата X (начиная с 1).
      * @param y Координата Y (начиная с 1).
-     * @return Status:
-     * - ongoing — если игра продолжается;
-     * - game_end — если партия завершена (победа или ничья).
+     * @return MoveResult см. структуру:
      */
     MoveResult Game::move(int x, int y)
     {
@@ -111,16 +109,9 @@ namespace Core
 
             MoveResult result = move(move_pos.first, move_pos.second);
 
-            if (result.status == game_end || !result.valid)
+            if (result.status == game_end)
             {
-                if (!result.valid)
-                {
-                    continue;
-                }
-                else
-                {
-                    break;
-                }
+                break;
             }
         }
     }

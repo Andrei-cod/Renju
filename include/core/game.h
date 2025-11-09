@@ -16,7 +16,32 @@ namespace Core
         pve,
         eve
     };
+    struct MoveResult
+    {
+        bool valid;
+        Status status;
+        std::optional<Color> winner;
 
+        static MoveResult invalid()
+        {
+            return {false, Status::ongoing, std::nullopt};
+        }
+
+        static MoveResult ongoing()
+        {
+            return {true, Status::ongoing, std::nullopt};
+        }
+
+        static MoveResult win(Color winner)
+        {
+            return {true, Status::game_end, winner};
+        }
+
+        static MoveResult draw()
+        {
+            return {true, Status::game_end, std::nullopt};
+        }
+    };
 
     /**
      * @brief Класс отвечающий за координацию игрового процесса
@@ -43,10 +68,12 @@ namespace Core
         Situation m_situation;
         bool m_is_valid_move;
 
+        
+
     public:
         /**
          * @brief Базовый конструктор класса.
-         * Генерирует игру без какой-либо начальной позиции 
+         * Генерирует игру без какой-либо начальной позиции
          * на поле размером size x size.
          * И с типом игры type(pvp, pve, eve)
          */
@@ -65,29 +92,28 @@ namespace Core
         /**
          * @brief Функция хода.
          *
-         * На позиции (x, y) устанавливается камень, цвет зависит от 
+         * На позиции (x, y) устанавливается камень, цвет зависит от
          * очередности(turn).
-         * 
+         *
          * @param x координата х.
          * @param y координата y.
-         * 
-         * @return Status Состояние игры.
+         *
+         * @return MoveResult Состояние игры.
          * @note в после зода совершает проверку состояния игры
          */
-        Status move(int x, int y);
+        MoveResult move(int x, int y);
 
         /**
          * @brief Функция связи с классом отрисовки
-         * 
+         *
          * Просто передает ситуацию отрисовке
          */
         void render();
-        
+
         /**
          * @brief Запуск основного цикла игры
          */
         void run();
-
     };
 
 }

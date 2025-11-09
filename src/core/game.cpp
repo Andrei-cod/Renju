@@ -30,9 +30,6 @@ namespace Core
         : m_size(board.get_size()), m_type(type), m_situation(board),
           m_turn(turn)
     {
-        if (m_situation.check_win())
-        {
-        }
     }
 
     /**
@@ -47,9 +44,9 @@ namespace Core
      * - ongoing — если игра продолжается;
      * - game_end — если партия завершена (победа или ничья).
      */
-    Status Game::move(int x, int y)
+    MoveResult Game::move(int x, int y)
     {
-        // Нормализация координат
+        // Нормализация координаты
         x--;
         y--;
 
@@ -61,36 +58,28 @@ namespace Core
         {
             m_is_valid_move = m_situation.move(x, y, Core::Color::Black);
         }
-        if (m_is_valid_move)
+
+        if (!m_is_valid_move)
         {
-            m_turn *= -1;
-        }
-        else
-        {
-            return ongoing;
+            return MoveResult::invalid();
         }
 
-        Status m = draw;
+        m_turn *= -1;
+
         int cw = m_situation.check_win(x, y);
         if (cw == 1)
         {
-            if (m_turn > 0)
-            {
-                m = black_wins;
-            }
-            else
-            {
-                m = white_wins;
-            }
-            Utils::Render::win(m_situation, m);
-            return game_end;
+            Color winner = (m_turn > 0) ? Color::Black : Color::White;
+            Utils::Render::win(m_situation, (winner == Color::White) ? white_wins : black_wins);
+            return MoveResult::win(winner);
         }
         else if (cw == 2)
         {
-            Utils::Render::win(m_situation, m);
-            return game_end;
+            Utils::Render::win(m_situation, draw);
+            return MoveResult::draw();
         }
-        return ongoing;
+
+        return MoveResult::ongoing();
     }
 
     void Game::render()
@@ -103,23 +92,13 @@ namespace Core
      */
     void Game::run()
     {
-        Player::Ips ips (Black);
-        Player::Human human (White);
-        std::pair<int,int> move_pos;    
-        
-        Core::Status game_status = Core::ongoing;
-        
+        Player::Ips ips(Black);
+        Player::Human human(White);
+        std::pair<int, int> move_pos;
 
         while (true)
         {
-            if (game_status == Core::ongoing)
-            {
-                render();
-            }
-            else
-            {
-                break;
-            }
+            render();
 
             if (m_turn > 0)
             {
@@ -130,7 +109,19 @@ namespace Core
                 move_pos = ips.get_move(m_situation);
             }
 
-            game_status = move(move_pos.first, move_pos.second);
+            MoveResult result = move(move_pos.first, move_pos.second);
+
+            if (result.status == game_end || !result.valid)
+            {
+                if (!result.valid)
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 

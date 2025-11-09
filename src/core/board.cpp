@@ -5,6 +5,7 @@
 
 #include "string"
 #include <vector>
+#include <optional>
 
 namespace Core
 {
@@ -32,12 +33,25 @@ namespace Core
      * @note После расстановки камней проверяет, не является ли позиция
      * уже завершённой (победной или ничейной).
      */
-    Situation::Situation(int size, std::vector<std::vector<int>> white,
-                         std::vector<std::vector<int>> black)
+    static std::optional<Situation> create_from_template(
+        int size,
+        std::vector<std::vector<int>> white,
+        std::vector<std::vector<int>> black)
     {
-        m_size = size;
-        m_draw_counter = size * size;
-        m_stones = std::vector<std::vector<Stone>>(m_size, std::vector<Stone>(m_size));
+        Situation board(size);
+        if (board.setup_board(white, black))
+        {
+            if (!board.check_win())
+            {
+                return board;
+            }
+        }
+        return std::nullopt;
+    }
+
+    bool Situation::setup_board(std::vector<std::vector<int>> white,
+                                std::vector<std::vector<int>> black)
+    {
         for (auto &&pos : white)
         {
             if (pos.size() >= 2)
@@ -49,6 +63,10 @@ namespace Core
                 {
                     m_stones[y][x].set_color(Color::White);
                     m_draw_counter--;
+                }
+                else
+                {
+                    return false;
                 }
             }
         }
@@ -65,12 +83,13 @@ namespace Core
                     m_stones[y][x].set_color(Color::Black);
                     m_draw_counter--;
                 }
+                else
+                {
+                    return false;
+                }
             }
         }
-        if (check_win())
-        {
-            Utils::Render::mess((std::string) "Это уже завершенная партия.");
-        }
+        return true;
     }
 
     /**
@@ -82,7 +101,7 @@ namespace Core
      */
     bool Situation::move(int x, int y, Color color)
     {
-        if (x < 0 || y < 0 || x >= m_size || y >= m_size || m_stones[y][x].get_color() != Color::None)
+        if (!is_within_bounds(x, y) || m_stones[y][x].get_color() != Color::None)
         {
             return false;
         }
@@ -114,7 +133,7 @@ namespace Core
         }
         auto [x, y] = last_move.back();
         last_move.pop_back();
-        m_stones[x][y].set_color(None);
+        m_stones[y][x].set_color(None);
         return true;
     }
 

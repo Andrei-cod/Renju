@@ -41,7 +41,7 @@ namespace Core
         int m_turn; // очередность хода 1 - white, -1 - black
         Type m_type;
         Situation m_situation;
-        bool f;
+        bool m_is_valid_move;
 
     public:
         /**
@@ -50,7 +50,7 @@ namespace Core
          * на поле размером size x size.
          * И с типом игры type(pvp, pve, eve)
          */
-        Game(int size, Type type);
+        Game(Core::Situation board, Type type);
 
         /**
          * @brief Конструктор класс с начальной позицией.
@@ -60,8 +60,7 @@ namespace Core
          * 1 - white
          * -1 - black
          */
-        Game(int size, std::vector<std::vector<int>> white,
-             std::vector<std::vector<int>> black, int turn, Type type);
+        Game(Core::Situation board, Type type, int turn);
 
         /**
          * @brief Функция хода.

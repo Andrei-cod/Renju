@@ -12,8 +12,8 @@ namespace Core
      * @param size Размер стороны игрового поля.
      * @param type Тип игры (например, с ботом или между игроками).
      */
-    Game::Game(int size, Type type)
-        : m_size(size), m_type(type), m_situation(size), m_turn(1), f(true) {}
+    Game::Game(Core::Situation board, Type type)
+        : m_size(board.get_size()), m_type(type), m_situation(board), m_turn(1), m_is_valid_move(true) {}
 
     /**
      * @brief Конструктор игры с уже установленным состоянием поля.
@@ -26,9 +26,8 @@ namespace Core
      * @param turn Текущий ход (1 — белые, -1 — чёрные).
      * @param type Тип игры.
      */
-    Game::Game(int size, std::vector<std::vector<int>> white,
-               std::vector<std::vector<int>> black, int turn, Type type)
-        : m_size(size), m_type(type), m_situation(size, white, black),
+    Game::Game(Core::Situation board, Type type, int turn)
+        : m_size(board.get_size()), m_type(type), m_situation(board),
           m_turn(turn)
     {
         if (m_situation.check_win())
@@ -50,18 +49,19 @@ namespace Core
      */
     Status Game::move(int x, int y)
     {
+        // Нормализация координат
         x--;
         y--;
 
         if (m_turn > 0)
         {
-            f = m_situation.move(x, y, Core::Color::White);
+            m_is_valid_move = m_situation.move(x, y, Core::Color::White);
         }
         else
         {
-            f = m_situation.move(x, y, Core::Color::Black);
+            m_is_valid_move = m_situation.move(x, y, Core::Color::Black);
         }
-        if (f)
+        if (m_is_valid_move)
         {
             m_turn *= -1;
         }
@@ -103,16 +103,16 @@ namespace Core
      */
     void Game::run()
     {
-        Player::Ips ips(Black);
+        Player::Ips ips (Black);
         Player::Human human (White);
         std::pair<int,int> move_pos;    
         
-        Core::Status f = Core::ongoing;
+        Core::Status game_status = Core::ongoing;
         
 
         while (true)
         {
-            if (f == Core::ongoing)
+            if (game_status == Core::ongoing)
             {
                 render();
             }
@@ -130,7 +130,7 @@ namespace Core
                 move_pos = ips.get_move(m_situation);
             }
 
-            f = move(move_pos.first, move_pos.second);
+            game_status = move(move_pos.first, move_pos.second);
         }
     }
 

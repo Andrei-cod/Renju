@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <deque>
-
+#include <optional>
 
 namespace Core
 {
@@ -35,7 +35,7 @@ namespace Core
         int m_size;
         int m_draw_counter;
         std::vector<std::vector<Stone>> m_stones;
-        std::deque<std::pair<int,int>> last_move;
+        std::deque<std::pair<int, int>> last_move;
 
     public:
         /**
@@ -47,9 +47,8 @@ namespace Core
          */
         Situation(int size);
 
-
         /**
-         * @brief Создает объект класса Situation размером size x size.
+         * @brief Создает объект класса Situation размером size x size(не конструктор).
          *
          * Создает непустое игровое поле:
          * по координатам из массива white устанавливаются белые камни,
@@ -58,9 +57,14 @@ namespace Core
          * @param size Размер создаваемого поля.
          * @param white Вектор координат белых камней. Координаты начинаются с 0.
          * @param black Вектор координат черных камней. Координаты начинаются с 0.
+         *
+         * @return Объект класса Situation или nullptr в случае если партия уже
+         * завершена.
          */
-        Situation(int size, std::vector<std::vector<int>> white, std::vector<std::vector<int>> black);
-
+        static std::optional<Situation> create_from_template(
+            int size,
+            std::vector<std::vector<int>> white,
+            std::vector<std::vector<int>> black);
 
         /**
          * @brief Ставит камень цвета color на позицию (x, y).
@@ -74,7 +78,6 @@ namespace Core
          */
         bool move(int x, int y, Color color);
 
-
         /**
          * @brief Отменяет последний выполненный ход.
          *
@@ -83,14 +86,12 @@ namespace Core
          */
         bool un_move();
 
-        
         /**
          * @brief Возвращает размер поля.
          *
          * @return int Размер поля.
          */
         int get_size();
-
 
         /**
          * @brief Возвращает цвет камня в указанной клетке.
@@ -121,12 +122,11 @@ namespace Core
          */
         int check_win(int x, int y);
 
-
         /**
          * @brief Функция проверки состояния игры
          *
          * Проверяет введнную комбинацию, не является ли та уже завершенным матчем.
-         * 
+         *
          * 1 - Игра уже завершена
          * 0 - Партию можно продолжить
          *
@@ -134,9 +134,8 @@ namespace Core
          *
          * @note Проверка всего поля.
          */
-        
-        int check_win();
 
+        int check_win();
 
         /**
          * @brief Проверяет, находятся ли координаты в пределах игрового поля.
@@ -148,7 +147,6 @@ namespace Core
          */
 
         bool is_within_bounds(int x, int y) const;
-
 
         /**
          * @brief Проверяет наличие последовательности из пяти камней подряд.
@@ -163,6 +161,9 @@ namespace Core
          */
 
         bool has_five_in_a_row(int x, int y, int dx, int dy, Color base_color) const;
+
+        bool setup_board(std::vector<std::vector<int>> white,
+                         std::vector<std::vector<int>> black);
     };
 
 } // namespace Core

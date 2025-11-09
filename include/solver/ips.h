@@ -4,7 +4,7 @@
 
 #include <utility>
 
-namespace Player
+namespace AI
 {
     class Ips
     {

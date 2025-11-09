@@ -58,13 +58,15 @@ namespace Core
          * @param white Вектор координат белых камней. Координаты начинаются с 0.
          * @param black Вектор координат черных камней. Координаты начинаются с 0.
          *
-         * @return Объект класса Situation или nullptr в случае если партия уже
+         * @return Объект класса Situation или nullopt в случае если партия уже
          * завершена.
          */
         static std::optional<Situation> create_from_template(
             int size,
             std::vector<std::vector<int>> white,
             std::vector<std::vector<int>> black);
+
+        static Situation create_with_openning(int size);
 
         /**
          * @brief Ставит камень цвета color на позицию (x, y).
@@ -161,9 +163,21 @@ namespace Core
          */
 
         bool has_five_in_a_row(int x, int y, int dx, int dy, Color base_color) const;
-
+        
+        /**
+         * @brief Настраивает начальную позицию игрового поля.
+         *
+         * Инициализирует доску заданным набором белых и чёрных камней.
+         * Выполняет проверку валидности позиции и соответствия правилам игры.
+         *
+         * @param white Вектор координат белых камней в формате {{x1, y1}, {x2, y2}, ...}
+         * @param black Вектор координат чёрных камней в формате {{x1, y1}, {x2, y2}, ...}
+         * @return bool: true - позиция успешно установлена, false - невалидная позиция
+         */
         bool setup_board(std::vector<std::vector<int>> white,
                          std::vector<std::vector<int>> black);
+
+        bool is_empty(int x, int y);
     };
 
 } // namespace Core

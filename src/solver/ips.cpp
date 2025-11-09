@@ -3,9 +3,9 @@
 #include "core/constans.h"
 
 #include <utility>
-#include <random>
+#include <random>   
 
-namespace Player
+namespace AI
 {
     std::pair<int, int> Ips::bfs(Core::Situation &situation)
     {

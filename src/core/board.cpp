@@ -6,6 +6,7 @@
 #include "string"
 #include <vector>
 #include <optional>
+#include <ctime>
 
 namespace Core
 {
@@ -48,6 +49,60 @@ namespace Core
         }
         return std::nullopt;
     }
+
+    /**
+     * @brief Создает ситуацию со случайной начальной расстановкой камней.
+     *
+     * Генерирует случайное количество камней (от 1 до половины площади поля)
+     * и размещает их в случайных позициях, чередуя белые и чёрные камни.
+     * Гарантирует, что все ходы являются валидными согласно правилам игры
+     * и позиция не является выигрышной для какой-либо из сторон.
+     *
+     * @param size Размер стороны игрового поля.
+     * @return Situation Объект игровой ситуации со случайной расстановкой.
+     */
+    Situation Situation::create_with_openning(int size)
+    {
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+        Situation board(size);
+        int max_stones = size * size / 2;
+        int num_stones = rand() % max_stones + 1; // От 1 до max_stones
+
+        for (int i = 0; i < num_stones; ++i)
+        {
+            int x, y;
+
+            do
+            {
+                x = rand() % size;
+                y = rand() % size;
+            } while (!board.is_empty(x, y));
+
+            Core::Color color = (i % 2 == 0) ? Core::Color::White : Core::Color::Black;
+
+            board.move(x, y, color);
+
+            if (board.check_win(x, y) != 0)
+            {
+                board.un_move();
+                i--;
+            }
+        }
+
+        return board;
+    }
+
+    /**
+     * @brief Настраивает начальную позицию игрового поля.
+     *
+     * Инициализирует доску заданным набором белых и чёрных камней.
+     * Выполняет проверку валидности позиции и соответствия правилам игры.
+     *
+     * @param white Вектор координат белых камней в формате {{x1, y1}, {x2, y2}, ...}
+     * @param black Вектор координат чёрных камней в формате {{x1, y1}, {x2, y2}, ...}
+     * @return bool: true - позиция успешно установлена, false - невалидная позиция
+     */
 
     bool Situation::setup_board(std::vector<std::vector<int>> white,
                                 std::vector<std::vector<int>> black)
@@ -298,6 +353,11 @@ namespace Core
         }
 
         return false;
+    }
+
+    bool Situation::is_empty(int x, int y)
+    {
+        return m_stones[y][x].get_color() == Color::None;
     }
 
 } // namespace Core

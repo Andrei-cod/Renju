@@ -2,6 +2,7 @@
 
 #include "core/board.h"
 
+#include <vector>
 #include <utility>
 
 namespace AI
@@ -17,6 +18,14 @@ namespace AI
 
         std::pair<int, int> heur_find(Core::Situation &situation);
 
+        std::vector<std::pair<int,int>> extract_stones(Core::Situation &situation);
+
+        std::vector<std::pair<int,int>> generate_moves_base(Core::Situation &situation);
+
+        std::vector<std::pair<int,int>> generate_moves_smart(Core::Situation &situation);
+
+        std::vector<std::pair<int,int>> get_stones(Core::Situation &situation);
+        
 
     public:
         Ips(Core::Color color);

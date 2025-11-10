@@ -90,7 +90,7 @@ namespace Core
      */
     void Game::run()
     {
-        Player::Ips ips(Black);
+        AI::Ips ips(Black);
         Player::Human human(White);
         std::pair<int, int> move_pos;
 

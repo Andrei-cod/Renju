@@ -163,7 +163,7 @@ namespace Core
          */
 
         bool has_five_in_a_row(int x, int y, int dx, int dy, Color base_color) const;
-        
+
         /**
          * @brief Настраивает начальную позицию игрового поля.
          *
@@ -177,7 +177,32 @@ namespace Core
         bool setup_board(std::vector<std::vector<int>> white,
                          std::vector<std::vector<int>> black);
 
+        /**
+         * @brief Проверяет, является ли указанная клетка игрового поля пустой.
+         *
+         * @param x Координата X клетки
+         * @param y Координата Y клетки
+         * @return bool: true - клетка существует и пуста, false - клетка занята или координаты невалидны
+         *
+         * @note Для детальной проверки используйте комбинацию is_within_bounds() && is_empty()
+         * 
+         * @see is_within_bounds()
+         */
         bool is_empty(int x, int y);
+
+        /**
+         * @brief Возвращает тип камня на указанной клетке игрового поля.
+         *
+         * Предоставляет доступ к состоянию конкретной клетки доски.
+         * Может использоваться для анализа позиции, проверки ходов и реализации игровой логики.
+         *
+         * @param x Координата X клетки (от 0 до 14 включительно)
+         * @param y Координата Y клетки (от 0 до 14 включительно)
+         * @return Stone: тип камня на клетке - Stone::White, Stone::Black или Stone::Empty
+         *
+         * @throw std::out_of_range если координаты выходят за границы игрового поля
+         */
+        Stone get_stone(int x, int y);
     };
 
 } // namespace Core

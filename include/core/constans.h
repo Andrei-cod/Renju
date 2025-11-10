@@ -1,16 +1,17 @@
 #pragma once
 
-namespace Core::Constans
+namespace Core::Constants
 {
     inline constexpr int MAX_SEARCH_DEPTH = 3;
 
-    /**
-     * Алгоритмы поиска
-     * 1 - поиск в глубину
-     * 2 - поиск в ширину
-     * 3 - поиск с эврестической функцией
-     */
-    inline constexpr int SEARCH_ALGORIMT = 2;
+    enum class SearchAlgo
+    {
+        DepthFirst = 1,
+        BreadthFirst = 2,
+        Heuristic = 3
+    };
+
+    inline constexpr SearchAlgo SEARCH_ALGORIMT = SearchAlgo::BreadthFirst;
 
     inline constexpr int FIELD_SIZE = 9;
-} // namespace Core::Constans
+} // namespace Core::Constants

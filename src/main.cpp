@@ -18,7 +18,7 @@
 int main()
 {
     
-    Core::Game game(Core::Situation::create_with_openning(Core::Constans::FIELD_SIZE), Core::Type::pve);
+    Core::Game game(Core::Situation::create_with_openning(Core::Constants::FIELD_SIZE), Core::Type::pve);
     game.run();
 /*
     Core::Status f = Core::ongoing;

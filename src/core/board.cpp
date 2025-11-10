@@ -3,7 +3,8 @@
 #include "core/constans.h"
 #include "utils/render.h"
 
-#include "string"
+#include <stdexcept>
+#include <string>
 #include <vector>
 #include <optional>
 #include <ctime>
@@ -77,7 +78,7 @@ namespace Core
             {
                 x = rand() % size;
                 y = rand() % size;
-            } while (!board.is_empty(x, y));
+            } while (board.is_within_bounds(x,y) && !board.is_empty(x, y));
 
             Core::Color color = (i % 2 == 0) ? Core::Color::White : Core::Color::Black;
 
@@ -163,7 +164,7 @@ namespace Core
         m_stones[y][x].set_color(color);
         m_draw_counter -= 1;
         last_move.push_back({x, y});
-        if (last_move.size() > Constans::MAX_SEARCH_DEPTH)
+        if (last_move.size() > Constants::MAX_SEARCH_DEPTH)
         {
             last_move.pop_front();
         }
@@ -355,9 +356,25 @@ namespace Core
         return false;
     }
 
+    /**
+     * @brief Проверка клетки на пустоту, вхождение тож проверяет
+     */
     bool Situation::is_empty(int x, int y)
     {
-        return m_stones[y][x].get_color() == Color::None;
+        return is_within_bounds(x, y) && m_stones[y][x].get_color() == Color::None;
+    }
+
+
+    /**
+     * @brief Возвращает камень по координате
+     */
+    Stone Situation::get_stone(int x, int y)
+    {
+        if (is_within_bounds(x, y))
+        {
+            return m_stones[x][y];
+        }
+        throw std::out_of_range("Coordinates (" + std::to_string(x) + ", " + std::to_string(y) + ") are out of bounds");
     }
 
 } // namespace Core
